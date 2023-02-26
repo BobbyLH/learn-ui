@@ -24,7 +24,7 @@ module.exports = async function (ctx, next) {
 
   ctx.body = JSON.stringify(result);
   ctx.type = 'application/json';
-  ctx.status = 500;
+  ctx.status = status;
 
   next();
 }

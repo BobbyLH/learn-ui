@@ -1,5 +1,6 @@
 import React, { memo, useState } from 'react';
-import { Radio, Input, Button } from 'antd';
+import { Radio, Input, Button, Modal } from 'antd';
+import request from '@utils/request';
 import styles from './style/ChatGPT.module.scss';
 /* import types */
 import type { FC, PropsWithChildren } from 'react';
@@ -13,22 +14,37 @@ const placeholders = [
   'Input your api key',
   'Input your access token'
 ];
+const apiPath = [
+  '/api/offcial',
+  '/api/unoffcial'
+];
+
 export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
   const [APIType, setAPIType] = useState(0);
+  const [message, setMessage] = useState('');
+  const [data, setData] = useState('');
+  const [errMsg, setErrMsg] = useState('');
   const handleAPIType = (e: RadioChangeEvent) => {
     setAPIType(e.target.value);
   };
-  const handleChangeKey = () => {
+  const handleChangeKey = (e: React.ChangeEvent<HTMLInputElement>) => {
     
   };
   const handleApplyKey = () => {
 
   };
-  const handleChangeAsk = () => {
-
+  const handleChangeAsk = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
   };
   const handleSubmit = () => {
-    
+    request<{ code: number; data: string; }>({
+      method: 'POST',
+      url: apiPath[APIType],
+      data: { message }
+    })
+      .success(res => setData(res.data))
+      .fail(res => setData(res.data))
+      .error(e => setErrMsg(e.message));
   };
 
   return (
@@ -54,8 +70,11 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
         </div>
       </div>
       <div className={styles.result}>
-
+        { data }
       </div>
+      <Modal open={!!errMsg} title='Error Message' onOk={() => setErrMsg('')} onCancel={() => setErrMsg('')}>
+        <p>{errMsg}</p>
+      </Modal>
     </div>
   );
 };
