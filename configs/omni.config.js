@@ -1,6 +1,6 @@
 'use strict';
-
 const path = require('path');
+const { offcial, unoffcial } = require('../middleware');
 const { nextRouter } = require('../src/routes');
 const serverOptions = {
   
@@ -16,6 +16,18 @@ const serverOptions = {
     //     changeOrigin: true
     //   }
     // }
+  ],
+  middleware: [
+    {
+      route: '/api/offcial',
+      method: 'post',
+      callback: offcial
+    },
+    {
+      route: '/api/unoffcial',
+      method: 'post',
+      callback: unoffcial
+    }
   ],
   // host: 'dev.domain.com', // 服务端host (server host)
   // https: true // 以https协议启动服务 (start server with https)

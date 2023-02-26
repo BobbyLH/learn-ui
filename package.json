@@ -1,7 +1,7 @@
 {
   "name": "openai-ui",
   "version": "0.0.1",
-  "description": "",
+  "description": "The project for learn OpenAI",
   "scripts": {
     "start": "cross-env BUILD_ENV=production omni start",
     "dev": "cross-env BUILD_ENV=development omni dev",

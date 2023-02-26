@@ -6,6 +6,7 @@ dist/
 server/
 demo/
 node_modules/
+middleware/
 .docz/
 .storybook/
 .out/

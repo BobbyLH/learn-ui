@@ -39,9 +39,6 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = props => {
       <div className={styles['layout-content']}>
         { children }
       </div>
-      <footer className={styles['layout-footer']}>
-        Copyright © 2020 @omni-door
-      </footer>
     </main>
   );
 };
