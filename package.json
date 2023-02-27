@@ -61,6 +61,7 @@
     "ajax-maker": "^1.0.3",
     "antd": "^5.2.2",
     "chatgpt": "^4.7.2",
+    "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "koa": "~2.13.4",
     "koa-bodyparser": "~4.3.0",

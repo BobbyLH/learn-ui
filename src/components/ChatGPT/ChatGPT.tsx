@@ -1,10 +1,11 @@
-import React, { memo, useState } from 'react';
-import { Radio, Input, Button, Modal } from 'antd';
+import React, { memo, useState, useRef } from 'react';
+import { Radio, Input, Button, Modal, Spin } from 'antd';
+import dayjs from 'dayjs';
 import request from '@utils/request';
 import styles from './style/ChatGPT.module.scss';
 /* import types */
 import type { FC, PropsWithChildren } from 'react';
-import type { RadioChangeEvent } from 'antd';
+import type { RadioChangeEvent, InputRef } from 'antd';
 
 export interface ChatGPTProps {}
 
@@ -20,31 +21,32 @@ const apiPath = [
 ];
 
 export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
+  const [loading, setLoading] = useState(false);
   const [APIType, setAPIType] = useState(0);
   const [message, setMessage] = useState('');
-  const [data, setData] = useState('');
+  const [data, setData] = useState<{req: string, res: string, ts: number}[]>([]);
   const [errMsg, setErrMsg] = useState('');
+  const APIKey = useRef<InputRef | null>(null);
+  const CustomAPIKey = useRef(false);
   const handleAPIType = (e: RadioChangeEvent) => {
     setAPIType(e.target.value);
   };
-  const handleChangeKey = (e: React.ChangeEvent<HTMLInputElement>) => {
-    
-  };
-  const handleApplyKey = () => {
-
-  };
-  const handleChangeAsk = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
-  };
+  const handleChangeAsk = (e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value);
   const handleSubmit = () => {
+    if (loading) return;
+    setLoading(true);
     request<{ code: number; data: string; }>({
       method: 'POST',
       url: apiPath[APIType],
-      data: { message }
+      data: {
+        message,
+        [APIType === 1 ? 'key' : 'token']: CustomAPIKey.current ? APIKey.current?.input?.value : void 0
+      }
     })
-      .success(res => setData(res.data))
-      .fail(res => setData(res.data))
-      .error(e => setErrMsg(e.message));
+      .success(res => setData((prev) => [...prev, { req: message, res: res.data, ts: Date.now() }]))
+      .fail(res => setData((prev) => [...prev, { req: message, res: res.data, ts: Date.now() }]))
+      .error(e => setErrMsg(e.message))
+      .then(() => setLoading(false));
   };
 
   return (
@@ -58,20 +60,28 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
           <Radio value={1}>Unoffcial</Radio>
         </Radio.Group>
         <div className={styles['api-input']}>
-          <Input placeholder={placeholders[APIType]} onChange={handleChangeKey} />
-          <Button onClick={handleApplyKey} >Apply</Button>
+          <Input placeholder={placeholders[APIType]} ref={APIKey} />
+          <Button onClick={() => (CustomAPIKey.current = true)} >Apply</Button>
         </div>
       </div>
       <div className={styles.content}>
         <h3 className={styles['content-title']}>Ask Your Questions</h3>
         <div className={styles['content-ask']}>
           <TextArea placeholder='Input your questions' onChange={handleChangeAsk} />
-          <Button type='primary' size='large' onClick={handleSubmit} >Ask Me</Button>
+          <Button type='primary' size='large' onClick={handleSubmit} loading={loading}>Ask Me</Button>
         </div>
       </div>
-      <div className={styles.result}>
-        { data }
-      </div>
+      <Spin tip="Loading..." wrapperClassName={styles['result-loading']} spinning={loading}>
+        <div className={styles.result}>
+          { data.map((v, k) => {
+            return (<div className={styles['result-item']} key={k}>
+              <div className={styles['result-item-ts']}>{`${dayjs(v.ts).format('MM/DD YYYY - HH:mm:ss')}: `}</div>
+              <p className={styles['result-item-req']}>{`You: ${v.req}`}</p>
+              <p className={styles['result-item-res']}>{`Answer: ${v.res}`}</p>
+            </div>);
+          }) }
+        </div>
+      </Spin>
       <Modal open={!!errMsg} title='Error Message' onOk={() => setErrMsg('')} onCancel={() => setErrMsg('')}>
         <p>{errMsg}</p>
       </Modal>
