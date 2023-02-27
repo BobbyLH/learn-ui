@@ -1,4 +1,4 @@
-import React, { memo, useState, useRef } from 'react';
+import React, { memo, useState, useRef, useCallback } from 'react';
 import { Radio, Input, Button, Modal, Spin } from 'antd';
 import dayjs from 'dayjs';
 import request from '@utils/request';
@@ -29,13 +29,17 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
   const APIKey = useRef<InputRef | null>(null);
   const CustomAPIKey = useRef(false);
   const handleAPIType = (e: RadioChangeEvent) => {
-    setAPIType(e.target.value);
+    setAPIType(+e.target.value);
   };
   const handleChangeAsk = (e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value);
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (loading) return;
     setLoading(true);
-    request<{ code: number; data: string; }>({
+    request<{ code: number; data: {
+      message: string;
+      detail: any;
+      role: string;
+    }; }>({
       method: 'POST',
       url: apiPath[APIType],
       data: {
@@ -43,11 +47,11 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
         [APIType === 1 ? 'key' : 'token']: CustomAPIKey.current ? APIKey.current?.input?.value : void 0
       }
     })
-      .success(res => setData((prev) => [...prev, { req: message, res: res.data, ts: Date.now() }]))
-      .fail(res => setData((prev) => [...prev, { req: message, res: res.data, ts: Date.now() }]))
+      .success(res => setData((prev) => [...prev, { req: message, res: res.data.message, ts: (res.data.detail?.created ?? (Date.now() / 1000)) * 1000 }]))
+      .fail(res => setData((prev) => [...prev, { req: message, res: JSON.stringify(res.data), ts: (res.data.detail?.created ?? (Date.now() / 1000)) * 1000 }]))
       .error(e => setErrMsg(e.message))
       .then(() => setLoading(false));
-  };
+  }, [message, loading, APIType, CustomAPIKey]);
 
   return (
     <div
@@ -60,14 +64,14 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
           <Radio value={1}>Unoffcial</Radio>
         </Radio.Group>
         <div className={styles['api-input']}>
-          <Input placeholder={placeholders[APIType]} ref={APIKey} />
+          <Input allowClear placeholder={placeholders[APIType]} ref={APIKey} />
           <Button onClick={() => (CustomAPIKey.current = true)} >Apply</Button>
         </div>
       </div>
       <div className={styles.content}>
         <h3 className={styles['content-title']}>Ask Your Questions</h3>
         <div className={styles['content-ask']}>
-          <TextArea placeholder='Input your questions' onChange={handleChangeAsk} />
+          <TextArea autoSize allowClear placeholder='Input your questions' onChange={handleChangeAsk} />
           <Button type='primary' size='large' onClick={handleSubmit} loading={loading}>Ask Me</Button>
         </div>
       </div>

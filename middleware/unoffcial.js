@@ -1,3 +1,5 @@
+let conversationId, parentMessageId
+
 module.exports = async function (ctx, next) {
   let status = 200;
   const result = {
@@ -16,8 +18,17 @@ module.exports = async function (ctx, next) {
         apiReverseProxyUrl: reverse
       });
 
-      const res = await api.sendMessage(message);
-      result.data = res.text;
+      const res = await api.sendMessage(message, {
+        conversationId,
+        parentMessageId
+      });
+      conversationId = res.conversationId;
+      parentMessageId = res.id;
+      result.data = {
+        message: res.text,
+        detail: res.detail,
+        role: res.role
+      };
     } catch (e) {
       result.code = 500;
       result.data = e;
