@@ -6,7 +6,7 @@ const serverOptions = {
   
   port: 6600, // 服务端口号 (server port)
   nextRouter,
-  
+
   serverType: 'koa-next', // 服务类型，koa-next 和 next
   proxy:  [
     // {

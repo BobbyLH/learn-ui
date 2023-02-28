@@ -26,8 +26,8 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
   const [message, setMessage] = useState('');
   const [data, setData] = useState<{req: string, res: string, ts: number}[]>([]);
   const [errMsg, setErrMsg] = useState('');
-  const APIKey = useRef<InputRef | null>(null);
-  const CustomAPIKey = useRef(false);
+  const KeyInput = useRef<InputRef | null>(null);
+  const CustomAPIKey = useRef('');
   const handleAPIType = (e: RadioChangeEvent) => {
     setAPIType(+e.target.value);
   };
@@ -44,7 +44,7 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
       url: apiPath[APIType],
       data: {
         message,
-        [APIType === 1 ? 'key' : 'token']: CustomAPIKey.current ? APIKey.current?.input?.value : void 0
+        [APIType === 1 ? 'key' : 'token']: CustomAPIKey.current || void 0
       }
     })
       .success(res => setData((prev) => [...prev, { req: message, res: res.data.message, ts: (res.data.detail?.created ?? (Date.now() / 1000)) * 1000 }]))
@@ -64,8 +64,8 @@ export const ChatGPT: FC<PropsWithChildren<ChatGPTProps>> = props => {
           <Radio value={1}>Unoffcial</Radio>
         </Radio.Group>
         <div className={styles['api-input']}>
-          <Input allowClear placeholder={placeholders[APIType]} ref={APIKey} />
-          <Button onClick={() => (CustomAPIKey.current = true)} >Apply</Button>
+          <Input allowClear placeholder={placeholders[APIType]} ref={KeyInput} />
+          <Button onClick={() => (CustomAPIKey.current = KeyInput.current?.input?.value!)} >Apply</Button>
         </div>
       </div>
       <div className={styles.content}>
