@@ -7,6 +7,7 @@ server/
 demo/
 node_modules/
 middleware/
+scripts/
 .docz/
 .storybook/
 .out/
