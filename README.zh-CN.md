@@ -1,4 +1,4 @@
-# openai-ui
+# learn-ui
 
 [English](./README.md) | 简体中文
 
