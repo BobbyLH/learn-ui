@@ -54,10 +54,10 @@ const routes = [
     ]
   },
   {
-    page: 'code',
-    prettyUrl: () => `/code`,
+    page: 'wasm',
+    prettyUrl: () => `/wasm`,
     prettyUrlPatterns: [
-      { pattern: '/code' }
+      { pattern: '/wasm' }
     ]
   }
 ];

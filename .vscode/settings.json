@@ -39,5 +39,13 @@
     "**/.editorconfig": true,
     "**/.eslintignore": true,
     "**/.prettierignore": true
+  },
+  "files.associations": {
+    "algorithm": "cpp",
+    "array": "cpp",
+    "iterator": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "vector": "cpp"
   }
 }

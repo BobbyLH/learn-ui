@@ -31,8 +31,8 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = props => {
           <Link page='dalle'>
             <a>DALL·E</a>
           </Link>
-          <Link page='code'>
-            <a>Code Generate</a>
+          <Link page='wasm'>
+            <a>WebAssembly</a>
           </Link>
         </nav>
       </header>

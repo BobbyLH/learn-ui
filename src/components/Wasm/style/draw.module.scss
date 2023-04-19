@@ -1,0 +1,12 @@
+.wrapper {
+  display: block;
+}
+
+.canvas,
+.video {
+  max-width: 90vw;
+}
+
+.video {
+  display: none;
+}

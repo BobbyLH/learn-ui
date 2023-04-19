@@ -19,6 +19,8 @@
 /build
 /dist
 
+/wasm/main.*
+
 # local env files
 .env.local
 .env.development.local

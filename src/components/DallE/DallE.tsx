@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import styles from './style/DallE.module.scss';
+import styles from './style/index.module.scss';
 /* import types */
 import type { FC, PropsWithChildren } from 'react';
 
@@ -10,7 +10,7 @@ export const DallE: FC<PropsWithChildren<DallEProps>> = props => {
 
   return (
     <div
-      className={styles.DallE}
+      className={styles.wrapper}
     >
       { children }
     </div>

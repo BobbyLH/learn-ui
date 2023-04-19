@@ -2,7 +2,7 @@ import React, { memo, useState, useRef, useCallback } from 'react';
 import { Radio, Input, Button, Modal, Spin } from 'antd';
 import dayjs from 'dayjs';
 import request from '@utils/request';
-import styles from './style/ChatGPT.module.scss';
+import styles from './style/index.module.scss';
 /* import types */
 import type { FC, PropsWithChildren } from 'react';
 import type { RadioChangeEvent, InputRef } from 'antd';
